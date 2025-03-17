@@ -5,8 +5,8 @@ type Attributes = {
   [key: string]: string | number | boolean
 }
 type TooltipPosition = 'top' | 'right' | 'bottom' | 'left'
-export function createElement(tag: string, attributes: Attributes = {}, content?: string|Element): HTMLElement {
-  const element: HTMLElement = document.createElement(tag)
+export function createElement<T = HTMLElement>(tag: string, attributes: Attributes = {}, content?: string|Element): T {
+  const element: T|HTMLElement = document.createElement(tag)
   for (const [attribute, value] of Object.entries(attributes)) {
     if (typeof value === 'boolean') {
       element.setAttribute(attribute, value ? '' : 'false')
@@ -19,7 +19,7 @@ export function createElement(tag: string, attributes: Attributes = {}, content?
   } else if (content instanceof Element) {
     element.appendChild(content)
   }
-  return element
+  return element as T
 }
 
 export function createTooltip(element: HTMLElement, title: string, position: TooltipPosition = 'top'): HTMLElement {
