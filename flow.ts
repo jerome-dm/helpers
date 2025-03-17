@@ -55,7 +55,7 @@ class Flow<T, IsAsync extends boolean = false> implements FlowInterface<T, IsAsy
   ): Flow<R, IsAsync> {
     const value = this.value as T
     const { context, callArgs } = this.prepareTransformationArgs(value, args)
-    const result = this.executeTransformation(transformer, context, callArgs)
+    const result: R|Promise<R> = this.executeTransformation(transformer, context, callArgs)
     const finalValue = this.determineFinalValue(result, value, args) as R
     return new Flow(finalValue, false) as Flow<R, IsAsync>
   }
@@ -64,10 +64,10 @@ class Flow<T, IsAsync extends boolean = false> implements FlowInterface<T, IsAsy
     transformer: ((value: T, ...args: unknown[]) => R | Promise<R>) | R,
     args: unknown[]
   ): Flow<R, IsAsync> {
-    const asyncTransform = async (): Promise<R> => {
-      const value = await Promise.resolve(this.value)
+    const asyncTransform: () => Promise<R> = async (): Promise<R> => {
+      const value: Awaited<T> = await Promise.resolve(this.value)
       const { context, callArgs } = this.prepareTransformationArgs(value, args)
-      const result = await Promise.resolve(this.executeTransformation(transformer, context, callArgs))
+      const result: Awaited<R> = await Promise.resolve(this.executeTransformation(transformer, context, callArgs))
       return this.determineFinalValue(result, value, args)
     }
     return new Flow(asyncTransform(), this.isAsync)
