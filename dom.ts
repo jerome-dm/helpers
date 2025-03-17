@@ -28,7 +28,7 @@ export function createTooltip(element: HTMLElement, title: string, position: Too
   })
 
   const tooltip: HTMLElement = createElement('div', {
-    class: 'absolute hidden group-hover:block z-50 px-3 py-2 text-xs bg-neutral-950 text-light rounded pointer-events-none whitespace-nowrap'
+    class: 'absolute hidden z-50 px-3 py-2 text-xs bg-neutral-950 text-light rounded pointer-events-none whitespace-nowrap'
   })
   tooltip.textContent = title
 
@@ -43,7 +43,14 @@ export function createTooltip(element: HTMLElement, title: string, position: Too
     tooltip.classList.add(className)
   })
 
-  wrapper.classList.add('group')
+  element.addEventListener('mouseenter', () => {
+    tooltip.classList.remove('hidden')
+  })
+
+  element.addEventListener('mouseleave', () => {
+    tooltip.classList.add('hidden')
+  })
+
   wrapper.appendChild(tooltip)
   wrapper.appendChild(element)
 
